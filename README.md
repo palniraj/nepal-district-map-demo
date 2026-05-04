@@ -13,7 +13,7 @@ Live demo for the [nepal-district-map](https://www.npmjs.com/package/nepal-distr
 
 ### Video Walkthrough
 
-https://github.com/palniraj/nepal-district-map-demo/assets/demo-screencast.mp4
+https://github.com/user-attachments/assets/709b9f44-225d-4589-bde9-d9bb2d39106e
 
 ---
 

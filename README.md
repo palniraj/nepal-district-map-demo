@@ -4,6 +4,9 @@ Live demo for the [nepal-district-map](https://www.npmjs.com/package/nepal-distr
 
 [![npm version](https://img.shields.io/npm/v/nepal-district-map.svg)](https://www.npmjs.com/package/nepal-district-map)
 [![license](https://img.shields.io/npm/l/nepal-district-map.svg)](https://github.com/palniraj/nepal-district-map/blob/main/LICENSE)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-View%20Online-22c55e.svg)](https://palniraj.github.io/nepal-district-map-demo/)
+
+> 🌐 **[Try it live → palniraj.github.io/nepal-district-map-demo](https://palniraj.github.io/nepal-district-map-demo/)**
 
 ---
 

@@ -5,6 +5,7 @@ import {
   createMultiColorScale,
   getDataStats,
   getProvinceSummary,
+  DISTRICT_NAMES,
   type Province,
   type DistrictDataMap,
 } from "nepal-district-map";
@@ -171,12 +172,13 @@ const coverageData: DistrictDataMap = {
 
 /* ─── Tabs ─── */
 
-type Tab = "province" | "heatmap" | "coverage";
+type Tab = "province" | "heatmap" | "coverage" | "v11";
 
 export default function App() {
   const [tab, setTab] = useState<Tab>("province");
   const [selectedProvince, setSelectedProvince] = useState<Province | null>(null);
   const [clickedDistrict, setClickedDistrict] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const stats = getDataStats(populationData);
   const heatmapScale = createMultiColorScale(stats.min, stats.max, [
@@ -208,6 +210,7 @@ export default function App() {
             { id: "province" as Tab, label: "🗺️ Province View" },
             { id: "heatmap" as Tab, label: "🌡️ Population Heatmap" },
             { id: "coverage" as Tab, label: "📍 Coverage Map" },
+            { id: "v11" as Tab, label: "✨ New in v1.1" },
           ]).map(t => (
             <button
               key={t.id}
@@ -391,6 +394,96 @@ export default function App() {
             )}
           </div>
         )}
+
+        {/* ─── New in v1.1 ─── */}
+        {tab === "v11" && (() => {
+          const matches = searchQuery.trim()
+            ? DISTRICT_NAMES.filter(d => d.toLowerCase().includes(searchQuery.toLowerCase()))
+            : [];
+
+          const v11Data: DistrictDataMap = {
+            ...populationData,
+            Mustang: { disabled: true, tooltip: "No data available" },
+            Manang:  { disabled: true, tooltip: "No data available" },
+            Dolpa:   { disabled: true, tooltip: "No data available" },
+            Humla:   { disabled: true, tooltip: "No data available" },
+          };
+
+          return (
+            <div>
+              <div style={{ marginBottom: 16, padding: "16px 20px", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 12 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "#22c55e", marginBottom: 8 }}>
+                  ✨ New in v1.1.0
+                </div>
+                <ul style={{ margin: 0, paddingLeft: 20, fontSize: 12, opacity: 0.85, lineHeight: 1.7 }}>
+                  <li>📱 Touch / mobile support — try on a phone</li>
+                  <li>🔍 <code>highlightedDistricts</code> — programmatic highlighting (search below)</li>
+                  <li>🎯 <code>tooltipPosition="follow-cursor"</code> — tooltip tracks the mouse</li>
+                  <li>💰 <code>valueFormatter</code> — Rs. 4,50,000 instead of 450000</li>
+                  <li>🚫 <code>disabled</code> in DistrictData — Mustang, Manang, Dolpa, Humla shown dimmed</li>
+                </ul>
+              </div>
+
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="🔍 Search district by name..."
+                style={{
+                  width: "100%",
+                  padding: "12px 16px",
+                  fontSize: 14,
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 10,
+                  color: "#fff",
+                  marginBottom: 12,
+                  outline: "none",
+                  boxSizing: "border-box",
+                }}
+              />
+
+              {searchQuery && (
+                <div style={{ fontSize: 12, opacity: 0.7, marginBottom: 12 }}>
+                  {matches.length === 0 ? (
+                    <span style={{ color: "#ef4444" }}>No districts match "{searchQuery}"</span>
+                  ) : (
+                    <span>Highlighting <strong style={{ color: "#22c55e" }}>{matches.length}</strong> {matches.length === 1 ? "district" : "districts"}: {matches.slice(0, 5).join(", ")}{matches.length > 5 ? `, +${matches.length - 5} more` : ""}</span>
+                  )}
+                </div>
+              )}
+
+              <NepalMap
+                data={v11Data}
+                colorMode="data"
+                colorScale={heatmapScale}
+                baseColor="#1e293b"
+                strokeColor="#334155"
+                backgroundColor="#0f172a"
+                labelColor="#e2e8f0"
+                highlightedDistricts={matches}
+                highlightColor="#22c55e"
+                tooltipPosition="follow-cursor"
+                valueFormatter={(v) => `Rs. ${v.toLocaleString("en-NP")}`}
+                onDistrictClick={(name, data) => setClickedDistrict(data?.tooltip ? `${name} — ${data.tooltip}` : name)}
+                style={{ borderRadius: 16, border: "1px solid rgba(255,255,255,0.08)" }}
+              />
+
+              <div style={{ marginTop: 16, fontSize: 11, opacity: 0.5, textAlign: "center" }}>
+                💡 Hover any district — tooltip follows your cursor. Try on mobile / touch screens too.
+              </div>
+
+              {clickedDistrict && (
+                <div style={{
+                  marginTop: 12, padding: "12px 20px", background: "rgba(255,255,255,0.06)",
+                  borderRadius: 12, fontSize: 14, display: "inline-block",
+                }}>
+                  <strong style={{ color: "#FFD600" }}>{clickedDistrict}</strong>
+                </div>
+              )}
+            </div>
+          );
+        })()}
       </main>
 
       {/* Footer */}
